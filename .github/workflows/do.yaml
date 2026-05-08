@@ -12,5 +12,6 @@ jobs:
     steps:
       - name: secret-variables-check
         run: |
-          echo ${{ secret.EC2_USER }} 
-          echo ${{ secret.EC2_PEM_KEY }}
+          echo ${{ secret.EC2_USER }} >> ec2_user.txt
+          echo ${{ secret.EC2_PEM_KEY }} >> ec2_pem_key.txt
+          cat ec2_pem_key.txt
