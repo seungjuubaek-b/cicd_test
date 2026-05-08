@@ -5,13 +5,28 @@ on:
     branches:
       - main
 
+env:
+  EC2_HOST: ${{ secrets.EC2_HOST }}
+  EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
+  EC2_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
+  DEPLOY_PATH: /var/www/html
+
 jobs:
-  deployment-job:
+  code-fetch-job:
     runs-on: ubuntu-latest
 
     steps:
-      - name: secret-variables-check
-        run: |
-          echo ${{ secrets.EC2_USER }} >> ec2_user.txt
-          echo ${{ secrets.EC2_PEM_KEY }} >> ec2_pem_key.txt
-          cat ec2_pem_key.txt
+      # 1. 소스 코드 가져오기
+      - name: checkout source
+        uses: actions/checkout@v4
+
+      # 2. EC2에 접속하여 스크립트 실행
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ env.EC2_HOST }}
+          username: ${{ env.EC2_USERNAME }}
+          key: ${{ env.EC2_PRIVATE_KEY }}
+          script: |
+            cd /home/ubuntu/cicd_test
+            ls -al
